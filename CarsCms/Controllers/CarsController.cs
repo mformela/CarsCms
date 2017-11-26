@@ -10,6 +10,9 @@ using CarsCms.Interfaces;
 using CarsCms.Models;
 using CarsCms.Repository.Interfaces;
 using CarsCms.ViewModels;
+using CarsCms.ApiConsumer;
+using CarsCms.ApiConsumer.Model;
+using System.Threading.Tasks;
 
 namespace CarsCms.Controllers
 {
@@ -63,12 +66,21 @@ namespace CarsCms.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(VMCars carEntity)
+        public async Task<ActionResult> Create(VMCars carEntity)
         {
             if (ModelState.IsValid)
             {
                 carEntity.Car.ModPerson = _businessLogic.CheckIfUserIsAuthAndReturnName();
                 _carsRepository.Create(carEntity.Car);
+                var client = new Client();
+                var model = new EmailApiModel();
+                model.To = "formela.marta@gmail.com";
+                await client.SendEmail(model);
+                
+                     
+
+
+
                 return RedirectToAction("Index");
             }
 
