@@ -9,6 +9,7 @@ using System.Web.Mvc;
 using CarsCms.Models;
 using CarsCms.Repository.Interfaces;
 using CarsCms.ViewModels;
+using CarsCms.Validation;
 
 namespace CarsCms.Controllers
 {
@@ -63,15 +64,26 @@ namespace CarsCms.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create(VMEngine model)
         {
-            if (ModelState.IsValid)
+
+            //w kontrolerze dodajemy walidację - wywołujemy, żeby zadziałało, usuwamy isValid, bo to odnosi do dataannotation
+            //to samo robimy dla edit
+            var validator = new EngineValidator();
+            var result = validator.Validate(model.Engine);
+            if (result.Errors.Any())
+                foreach (var item in result.Errors)
+                {
+                    ModelState.AddModelError("", item.ErrorMessage);
+                }
+            else
             {
-                
                 _engineRepository.Create(model.Engine);
                 return RedirectToAction("Index");
             }
-
             return View(model);
         }
+
+
+        
 
         // GET: Cars/Edit/5
         public ActionResult Edit(int? id)
@@ -97,10 +109,16 @@ namespace CarsCms.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Edit(VMEngine model)
         {
-            if (ModelState.IsValid)
+            var validator = new EngineValidator();
+            var result = validator.Validate(model.Engine);
+            if (result.Errors.Any())
+                foreach (var item in result.Errors)
+                {
+                    ModelState.AddModelError("", item.ErrorMessage);
+                }
+            else
             {
-               
-                _engineRepository.Update(model.Engine);
+                _engineRepository.Create(model.Engine);
                 return RedirectToAction("Index");
             }
             return View(model);

@@ -18,7 +18,7 @@ namespace CarsCms.Models
         public string Model { get; set; }
         public int Capacity { get; set; }
         public string Type { get; set; }
-        public string Weight { get; set; }
+        public int Weight { get; set; }
 
     }
 }
